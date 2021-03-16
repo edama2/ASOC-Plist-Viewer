@@ -24,6 +24,7 @@
 		5E2CD9BF2601225F0008CCE4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		5E2CD9C12601225F0008CCE4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E2CD9C22601225F0008CCE4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5E2CD9C9260123140008CCE4 /* ASOC Plist Viewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ASOC Plist Viewer.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +67,7 @@
 		5E2CD9B6260121FD0008CCE4 /* ASOC Plist Viewer */ = {
 			isa = PBXGroup;
 			children = (
+				5E2CD9C9260123140008CCE4 /* ASOC Plist Viewer.entitlements */,
 				5E2CD9B7260121FD0008CCE4 /* CustomDocument.applescript */,
 				5E2CD9B9260121FD0008CCE4 /* CustomDocument.xib */,
 				5E2CD9BC2601225E0008CCE4 /* Assets.xcassets */,
@@ -86,6 +88,7 @@
 				5E2CD9AD260121FC0008CCE4 /* Sources */,
 				5E2CD9AE260121FC0008CCE4 /* Frameworks */,
 				5E2CD9AF260121FC0008CCE4 /* Resources */,
+				5E2CD9CA2601244B0008CCE4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -140,6 +143,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5E2CD9CA2601244B0008CCE4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5E2CD9AD260121FC0008CCE4 /* Sources */ = {
@@ -227,6 +250,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OSACOMPILE_EXECUTE_ONLY = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -278,6 +302,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OSACOMPILE_EXECUTE_ONLY = YES;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -286,6 +311,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ASOC Plist Viewer/ASOC Plist Viewer.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "ASOC Plist Viewer/Info.plist";
@@ -302,6 +328,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ASOC Plist Viewer/ASOC Plist Viewer.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "ASOC Plist Viewer/Info.plist";
