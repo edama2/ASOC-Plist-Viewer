@@ -9,18 +9,19 @@
 script CustomDocument
 	property parent : class "NSDocument"
 	
+	#MARK: IBOutlets
+	property theTreeController : missing value
+	
+	#MARK: 
+	property _the_dict : {}
+	
 	on init()
 		continue init()
-		
-		-- Add your subclass-specific initialization here.
-		-- If an error occurs here, return missing value.
-		
 		return me
 	end init
 	
+	# 対になるxibの名前を返す
 	on windowNibName()
-		-- Override returning the nib file name of the document
-		-- If you need to use a subclass of NSWindowController or if your document supports multiple NSWindowControllers, you should remove this method and override -makeWindowControllers instead.
 		return "CustomDocument"
 	end windowNibName
 	
@@ -38,23 +39,118 @@ script CustomDocument
 		return missing value
 	end dataOfType:|error|:
 	
-	on readFromData:theData ofType:typeName |error|:outError
-		
-		-- Insert code here to read your document from the given data of the specified type. If the given outError is not missing value, ensure that you set contents of outError when returning false.
-		
-		-- You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
-		
-		-- Return true if successful or false if there was an error.
-		set succeeded to false
-		if not succeeded and outError is not missing value then
-			set contents of outError to current application's NSError's errorWithDomain:(current application's NSCocoaErrorDomain) code:(current application's NSFileReadUnknownError) userInfo:(missing value)
-		end if
-		return encounteredError
-	end readFromData:ofType:|error|:
-	
+	#MARK: オートセーブの設定
 	on autosavesInPlace()
-		-- Return true if you wish to support autosaving and versions, false if you do not.
-		return true
+		return false
 	end autosavesInPlace
+	
+	#MARK: 読み込み
+	on readFromURL:theURL ofType:typeName |error|:outError
+		log "readFromURL"
+		log theURL as alias
+		
+		try
+			set _the_dict to current application's NSDictionary's alloc's initWithContentsOfURL:theURL |error|:(missing value)
+			log result
+		on error error_message number error_number
+			return false
+			set error_text to "Error: " & error_number & ". " & error_message
+			display dialog error_text buttons {"OK"} default button 1
+			return error_text
+		end try
+		
+		return true
+	end readFromURL:ofType:|error|:
+	
+	#MARK: 
+	on windowControllerDidLoadNib:windowController
+		log "windowControllerDidLoadNib"
+		continue windowControllerDidLoadNib:windowController
+		
+		set theInfo to task1(_the_dict)
+		log result
+		set theTreeController's content to theInfo
+		
+	end windowControllerDidLoadNib:
+	
+	
+	#MARK: 
+	on task1(anObj)
+		
+		set resulList to {}
+		
+		if (anObj's isKindOfClass:(current application's NSDictionary)) as boolean then
+			
+			set keyList to anObj's allKeys() as list
+			repeat with aKey in keyList
+				set aKey to aKey as text
+				set aValue to (anObj's objectForKey:aKey)
+				
+				set tmpList to {}
+				set tmpList to tmpList & {|key|:aKey}
+				set tmpList to tmpList & my task2(aValue)
+				
+				set resulList's end to tmpList
+			end repeat
+			
+		else if (anObj's isKindOfClass:(current application's NSArray)) as boolean then
+			
+			set countItem to anObj's |count|()
+			repeat with num from 1 to countItem
+				set aValue to (anObj's objectAtIndex:(num - 1))
+				
+				set tmpList to {}
+				set tmpList to tmpList & {|key|:"item " & (num - 1) as text}
+				set tmpList to tmpList & my task2(aValue)
+				
+				set resulList's end to tmpList
+			end repeat
+		end if
+		
+		return resulList --current application's NSArray's arrayWithArray:resulList
+	end task1
+	
+	on task2(aValue)
+		set tmpList to {}
+		
+		if (aValue's isKindOfClass:(current application's NSDictionary)) as boolean then
+			
+			set tmpList to tmpList & {type:"Dictionary"}
+			
+			set tmpStr to current application's NSString's stringWithFormat_("(%@ items)", aValue's allKeys()'s |count|())
+			set tmpList to tmpList & {value:tmpStr as text}
+			set tmpList to tmpList & {children:my task1(aValue)}
+			
+		else if (aValue's isKindOfClass:(current application's NSArray)) as boolean then
+			
+			set tmpList to tmpList & {type:"Array"}
+			
+			set tmpStr to current application's NSString's stringWithFormat_("(%@ items)", aValue's |count|())
+			set tmpList to tmpList & {value:tmpStr as text}
+			set tmpList to tmpList & {children:my task1(aValue)}
+			
+		else if (aValue's isKindOfClass:(current application's NSString)) as boolean then
+			
+			set tmpList to tmpList & {type:"String"}
+			set tmpList to tmpList & {value:aValue as text}
+			
+		else if (aValue's isKindOfClass:(current application's NSNumber)) as boolean then
+			
+			set tmpList to tmpList & {type:"Boolean"}
+			set tmpList to tmpList & {value:aValue as text}
+			
+		end if
+		
+		return tmpList
+	end task2
+	
+	
+end script
+
+
+script YKZWindowController
+	property parent : class "NSWindowController"
+	
+	property theTreeController : missing value
 	
 end script

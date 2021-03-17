@@ -13,6 +13,7 @@
 		5E2CD9BD2601225E0008CCE4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E2CD9BC2601225E0008CCE4 /* Assets.xcassets */; };
 		5E2CD9C02601225F0008CCE4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E2CD9BE2601225F0008CCE4 /* MainMenu.xib */; };
 		5E2CD9C32601225F0008CCE4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2CD9C22601225F0008CCE4 /* main.m */; };
+		5E2CD9CC260137270008CCE4 /* AppDelegate.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 5E2CD9CB260137270008CCE4 /* AppDelegate.applescript */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		5E2CD9C12601225F0008CCE4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E2CD9C22601225F0008CCE4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5E2CD9C9260123140008CCE4 /* ASOC Plist Viewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ASOC Plist Viewer.entitlements"; sourceTree = "<group>"; };
+		5E2CD9CB260137270008CCE4 /* AppDelegate.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = AppDelegate.applescript; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 		5E2CD9B6260121FD0008CCE4 /* ASOC Plist Viewer */ = {
 			isa = PBXGroup;
 			children = (
+				5E2CD9CB260137270008CCE4 /* AppDelegate.applescript */,
 				5E2CD9C9260123140008CCE4 /* ASOC Plist Viewer.entitlements */,
 				5E2CD9B7260121FD0008CCE4 /* CustomDocument.applescript */,
 				5E2CD9B9260121FD0008CCE4 /* CustomDocument.xib */,
@@ -171,6 +174,7 @@
 			files = (
 				5E2CD9C32601225F0008CCE4 /* main.m in Sources */,
 				5E2CD9B8260121FD0008CCE4 /* CustomDocument.applescript in Sources */,
+				5E2CD9CC260137270008CCE4 /* AppDelegate.applescript in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
