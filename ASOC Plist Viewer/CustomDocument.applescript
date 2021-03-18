@@ -15,18 +15,20 @@ script CustomDocument
 	#MARK: 
 	property _the_dict : {}
 	
+	#MARK: -
 	on init()
+		log "CustomDocument - init"
 		continue init()
 		return me
 	end init
 	
-	# ëŒÇ…Ç»ÇÈxibÇÃñºëOÇï‘Ç∑
+	#MARK: ëŒÇ…Ç»ÇÈxibÇÃñºëOÇï‘Ç∑
 	on windowNibName()
 		return "CustomDocument"
 	end windowNibName
 	
 	on dataOfType:typeName |error|:outError
-		
+		log "dataOfType"
 		-- Insert code here to write your document to data of the specified type. If the given outError is not missing value, ensure that you set contents of outError when returning missing value.
 		
 		-- You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
@@ -53,8 +55,9 @@ script CustomDocument
 			set _the_dict to current application's NSDictionary's alloc's initWithContentsOfURL:theURL |error|:(missing value)
 			log result
 		on error error_message number error_number
-			return false
 			set error_text to "Error: " & error_number & ". " & error_message
+			log result
+			return false
 			display dialog error_text buttons {"OK"} default button 1
 			return error_text
 		end try
@@ -62,12 +65,49 @@ script CustomDocument
 		return true
 	end readFromURL:ofType:|error|:
 	
+	
+	(*
+	#MARK: ì«Ç›çûÇ› sandbox
+	on readFromFileWrapper:fileWrapper ofType:typeName |error|:outError
+		log "readFromFileWrapper"
+		log fileWrapper
+		
+		
+		return true
+	end readFromFileWrapper:ofType:|error|:
+	
+	
+	on readFromData:theData ofType:typeName |error|:outError
+		log "readFromData"
+		log theData
+		return true
+	end readFromData:ofType:|error|:
+	*)
+	
+	on canAsynchronouslyWriteToURL:theURL ofType:typeName forSaveOperation:saveOperation
+		log "canAsynchronouslyWriteToURL"
+	end canAsynchronouslyWriteToURL:ofType:forSaveOperation:
+	
+	(*
+	on canConcurrentlyReadDocumentsOfType:typeName
+		log "canConcurrentlyReadDocumentsOfType"
+		log typeName as text
+		return (typeName as text) is "com.apple.property-list"
+	end canConcurrentlyReadDocumentsOfType:
+	
+	
+	
+	on makeWindowControllers()
+		log "makeWindowControllers()"
+	end makeWindowControllers
+	*)
+	
 	#MARK: 
 	on windowControllerDidLoadNib:windowController
 		log "windowControllerDidLoadNib"
 		continue windowControllerDidLoadNib:windowController
 		
-		set theInfo to task1(_the_dict)
+		set theInfo to my task1(_the_dict)
 		log result
 		set theTreeController's content to theInfo
 		
@@ -148,9 +188,3 @@ script CustomDocument
 end script
 
 
-script YKZWindowController
-	property parent : class "NSWindowController"
-	
-	property theTreeController : missing value
-	
-end script
