@@ -11,23 +11,14 @@ script AppDelegate
 	end applicationShouldTerminateAfterLastWindowClosed:
 	
 	#MARK: 起動時にウィンドウを開かない
-	(*
-on applicationShouldOpenUntitledFile:sender
+	on applicationShouldOpenUntitledFile:sender
 		log "applicationShouldOpenUntitledFile:"
 		log sender
-		return false
-	end applicationShouldOpenUntitledFile:
-*)
-	
-	#MARK: 起動時
-	on applicationWillFinishLaunching:aNotification
-		log "applicationWillFinishLaunching"
 		
-		#sandboxの時に「openDocument:」だとうまくいかないので選択ダイアログを自前で出す
-		--current application's NSDocumentController's sharedDocumentController's openDocument:(me)
-		
-		set mes to "ファイルを選択してください。"
-		set chooseItems to choose file of type {"com.apple.property-list"} with prompt mes
+		considering application responses -->アプリの応答を待って処理継続
+			set mes to "ファイルを選択してください。"
+			set chooseItems to choose file of type {"com.apple.property-list"} with prompt mes
+		end considering
 		set aPath to chooseItems's POSIX path
 		set fileURL to (current application's NSURL's fileURLWithPath:aPath)
 		
@@ -35,8 +26,16 @@ on applicationShouldOpenUntitledFile:sender
 			openDocumentWithContentsOfURL:(fileURL) ￢
 				display:(true) ￢
 				completionHandler:(missing value)
-		(**)
-		--log result
+		
+		return false
+	end applicationShouldOpenUntitledFile:
+	(**)
+	
+	#MARK: 起動時
+	on applicationWillFinishLaunching:aNotification
+		log "applicationWillFinishLaunching"
+		#sandboxの時に「openDocument:」がうまくいかない
+		--current application's NSDocumentController's sharedDocumentController's openDocument:(me)
 	end applicationWillFinishLaunching:
 	
 	on |application|:sender openFile:filename

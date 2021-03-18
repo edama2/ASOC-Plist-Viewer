@@ -66,37 +66,19 @@ script CustomDocument
 	end readFromURL:ofType:|error|:
 	
 	
-	(*
-	#MARK: 読み込み sandbox
-	on readFromFileWrapper:fileWrapper ofType:typeName |error|:outError
-		log "readFromFileWrapper"
-		log fileWrapper
-		
-		
-		return true
-	end readFromFileWrapper:ofType:|error|:
-	
-	
-	on readFromData:theData ofType:typeName |error|:outError
-		log "readFromData"
-		log theData
-		return true
-	end readFromData:ofType:|error|:
-	*)
-	
 	on canAsynchronouslyWriteToURL:theURL ofType:typeName forSaveOperation:saveOperation
 		log "canAsynchronouslyWriteToURL"
 	end canAsynchronouslyWriteToURL:ofType:forSaveOperation:
 	
-	(*
+	#
 	on canConcurrentlyReadDocumentsOfType:typeName
 		log "canConcurrentlyReadDocumentsOfType"
-		log typeName as text
-		return (typeName as text) is "com.apple.property-list"
+		log typeName
+		return typeName is "com.apple.property-list"
 	end canConcurrentlyReadDocumentsOfType:
 	
 	
-	
+	(*
 	on makeWindowControllers()
 		log "makeWindowControllers()"
 	end makeWindowControllers
@@ -114,7 +96,7 @@ script CustomDocument
 	end windowControllerDidLoadNib:
 	
 	
-	#MARK: 
+	#MARK: 読み込んだplistをoutlineView用のデータに変換
 	on task1(anObj)
 		
 		set resulList to {}
@@ -147,7 +129,7 @@ script CustomDocument
 			end repeat
 		end if
 		
-		return resulList --current application's NSArray's arrayWithArray:resulList
+		return resulList
 	end task1
 	
 	on task2(aValue)
@@ -183,8 +165,6 @@ script CustomDocument
 		
 		return tmpList
 	end task2
-	
-	
 end script
 
 
