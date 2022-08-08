@@ -9,50 +9,60 @@
 script CustomDocument
 	property parent : class "NSDocument"
 	
+	
+	# MARK: - @Property
+	property autosavesInPlace : false --> オートセーブのON/OFF
+	--property windowNibName : "CustomDocument" --> ウインドウコントローラのウインドウのnibファイル名
+	# オートセーブのON/OFF
+	(*on autosavesInPlace()
+		-- Return true if you wish to support autosaving and versions, false if you do not.
+		return not true
+	end autosavesInPlace*)
+	
+	on windowNibName()
+		return "CustomDocument"
+	end windowNibName (**)
+	
+	
 	#MARK: IBOutlets
 	property theTreeController : missing value
 	
 	#MARK: 
 	property _the_dict : {}
 	
-	#MARK: -
+	
+	# MARK: - NSDocument 
+	## Instance Method
+	
 	on init()
-		log "CustomDocument - init"
+		--log "CustomDocument - init"
 		continue init()
 		return me
 	end init
 	
-	#MARK: 対になるxibの名前を返す
-	on windowNibName()
-		return "CustomDocument"
-	end windowNibName
+	
 	
 	on dataOfType:typeName |error|:outError
-		log "dataOfType"
-		-- Insert code here to write your document to data of the specified type. If the given outError is not missing value, ensure that you set contents of outError when returning missing value.
-		
-		-- You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-		set succeeded to false
-		if not succeeded and outError is not missing value then
-			set contents of outError to current application's NSError's errorWithDomain:(current application's NSCocoaErrorDomain) code:(current application's NSFileWriteUnknownError) userInfo:(missing value)
-		end if
-		
-		-- Return your document's contents as data, or missing value if there was an error.
-		return missing value
+		log "dataOfType:|error|:"
+		set aContent to my theTreeController's content()
+		set aData to current application's NSKeyedArchiver's archivedDataWithRootObject:aContent
+		return aData
 	end dataOfType:|error|:
 	
-	#MARK: オートセーブの設定
-	on autosavesInPlace()
-		return false
-	end autosavesInPlace
+	
+	## ドキュメントデータを読み込みドキュメントウインドウに表示
+	on readFromData:theData ofType:typeName |error|:outError
+		log "readFromData:ofType:|error|:"
+	end readFromData:ofType:|error|:
+	
 	
 	#MARK: 読み込み
 	on readFromURL:theURL ofType:typeName |error|:outError
-		log "readFromURL"
+		log "readFromURL:ofType:|error|:"
 		log theURL as alias
 		
 		try
-			set _the_dict to current application's NSDictionary's alloc's initWithContentsOfURL:theURL |error|:(missing value)
+			set my _the_dict to current application's NSDictionary's alloc's initWithContentsOfURL:theURL |error|:(missing value)
 			log result
 		on error error_message number error_number
 			set error_text to "Error: " & error_number & ". " & error_message
@@ -65,7 +75,8 @@ script CustomDocument
 		return true
 	end readFromURL:ofType:|error|:
 	
-	
+	(*
+	なくても大丈夫そう
 	on canAsynchronouslyWriteToURL:theURL ofType:typeName forSaveOperation:saveOperation
 		log "canAsynchronouslyWriteToURL"
 	end canAsynchronouslyWriteToURL:ofType:forSaveOperation:
@@ -76,7 +87,7 @@ script CustomDocument
 		log typeName
 		return typeName is "com.apple.property-list"
 	end canConcurrentlyReadDocumentsOfType:
-	
+	*)
 	
 	(*
 	on makeWindowControllers()
@@ -86,10 +97,10 @@ script CustomDocument
 	
 	#MARK: 
 	on windowControllerDidLoadNib:windowController
-		log "windowControllerDidLoadNib"
+		log "windowControllerDidLoadNib:"
 		continue windowControllerDidLoadNib:windowController
 		
-		set theInfo to my task1(_the_dict)
+		set theInfo to my task1(my _the_dict)
 		log result
 		set theTreeController's content to theInfo
 		
@@ -97,6 +108,81 @@ script CustomDocument
 	
 	
 	#MARK: 読み込んだplistをoutlineView用のデータに変換
+	(*on task3(anObj)
+		
+		set resulList to {}
+		
+		if (anObj's isKindOfClass:(current application's NSDictionary)) as boolean then
+			
+			set keyList to anObj's allKeys() as list
+			
+			repeat with aKey in keyList
+				set aKey to aKey as text
+				set aValue to (anObj's objectForKey:aKey)
+				
+				set tmpList to {}
+				set tmpList to tmpList & {|key|:aKey}
+				
+				set tmpResult to my task1(aValue)
+				log result's class
+				
+				if tmpResult's class is record then
+					set tmpDict to (current application's NSDictionary's dictionaryWithDictionary:tmpResult)
+					
+					log tmpDict's allKeys() as list
+					
+					set tmpValue to (anObj's objectForKey:"type")
+					if tmpValue is "Dictionary" then
+						set tmpStr to current application's NSString's stringWithFormat_("(%@ items)", tmpDict's allKeys()'s |count|())
+						set tmpList to tmpList & {value:tmpStr as text}
+						set tmpList to tmpList & {type:"Dictionary"}
+						set tmpList to tmpList & {children:tmpResult}
+					else
+						set tmpList to tmpList & tmpResult
+					end if
+				else if tmpResult's class is list then
+					set aCount to count tmpResult
+					set tmpStr to current application's NSString's stringWithFormat_("(%@ items)", aCount)
+					--set tmpList to tmpList & {value:tmpStr as text}
+					set tmpList to tmpList & {children:tmpResult}
+				else
+					set tmpList to tmpList & tmpResult
+				end if
+				
+				set resulList's end to tmpList
+			end repeat
+			
+		else if (anObj's isKindOfClass:(current application's NSArray)) as boolean then
+			
+			set countItem to anObj's |count|()
+			set tmpStr to current application's NSString's stringWithFormat_("(%@ items)", countItem)
+			repeat with num from 1 to countItem
+				set aValue to (anObj's objectAtIndex:(num - 1))
+				
+				set tmpList to {}
+				set tmpList to tmpList & {|key|:"item " & (num - 1) as text}
+				set tmpList to tmpList & {type:"Array"}
+				set tmpList to tmpList & {value:tmpStr as text}
+				set tmpList to tmpList & {children:my task1(aValue)}
+				
+				set resulList's end to tmpList
+			end repeat
+			
+		else if (anObj's isKindOfClass:(current application's NSString)) as boolean then
+			
+			set resulList to resulList & {type:"String"}
+			set resulList to resulList & {value:anObj as text}
+			
+		else if (anObj's isKindOfClass:(current application's NSNumber)) as boolean then
+			
+			set resulList to resulList & {type:"Boolean"}
+			set resulList to resulList & {value:anObj as text}
+			
+		end if
+		
+		return resulList
+	end task3*)
+	
 	on task1(anObj)
 		
 		set resulList to {}

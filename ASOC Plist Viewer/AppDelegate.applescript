@@ -1,9 +1,9 @@
 script AppDelegate
 	property parent : class "NSObject"
 	
-	on applicationShouldTerminate:sender
+	(*on applicationShouldTerminate:sender
 		return current application's NSTerminateNow
-	end applicationShouldTerminate:
+	end applicationShouldTerminate:*)
 	
 	#MARK: windowを閉じたら終了
 	on applicationShouldTerminateAfterLastWindowClosed:sender
@@ -13,9 +13,9 @@ script AppDelegate
 	#MARK: 起動時にウィンドウを開かない
 	on applicationShouldOpenUntitledFile:sender
 		log "applicationShouldOpenUntitledFile:"
-		log sender
+		return true
 		
-		considering application responses -->アプリの応答を待って処理継続
+		(*considering application responses -->アプリの応答を待って処理継続
 			set mes to "ファイルを選択してください。"
 			set chooseItems to choose file of type {"com.apple.property-list"} with prompt mes
 		end considering
@@ -27,9 +27,9 @@ script AppDelegate
 				display:(true) ￢
 				completionHandler:(missing value)
 		
-		return false
+		return false*)
 	end applicationShouldOpenUntitledFile:
-	(**)
+	
 	
 	#MARK: 起動時
 	on applicationWillFinishLaunching:aNotification
@@ -43,5 +43,17 @@ script AppDelegate
 	
 	on |application|:sender openFiles:filenames
 	end |application|:openFiles:
+	
+	
+	# アプリケーションがアクティブになった時
+	on applicationDidBecomeActive:aNotification
+		log "applicationDidBecomeActive:"
+		
+		tell current application's NSDocumentController's sharedDocumentController()
+			set aCount to |documents|()'s |count|() as integer
+			--log result
+			if aCount is 0 then openDocument_(missing value)
+		end tell
+	end applicationDidBecomeActive:
 	
 end script
